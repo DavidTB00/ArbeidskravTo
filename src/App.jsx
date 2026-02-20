@@ -1,35 +1,38 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import AddForm from "./components/AddForm"
+import ShoppingList from "./components/ShoppingList"
+  /* Så og si brukt AI til alt av kode, feilmeldinger og feilsøkt i konsollen https://gemini.google.com/share/fe7694548b26 */
+export default function App() {
+  const [varer, setVarer] = useState([
+    { id: 1, navn: "Melk", antall: 2, bought: false },
+    { id: 2, navn: "Egg", antall: 1, bought: true },
+  ]);
 
-function App() {
-  const [count, setCount] = useState(0)
+  const toggleVare = (id) => {
+    setVarer(varer.map((vare) => 
+      vare.id === id ? { ...vare, bought: !vare.bought } : vare
+    ));
+  };
+
+  const endreAntall = (id, endring) => {
+    setVarer(varer.map((vare) => 
+      vare.id === id ? { ...vare, antall: Math.max(1, vare.antall + endring) } : vare
+    ));
+  };
+
+  const leggTilVare = (navn, antall) => {
+    const nyVare = { id: Date.now(), navn, antall, bought: false };
+    setVarer([nyVare, ...varer]);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <main>
+      <header>
+        <h1>Handleliste</h1>
+      </header>
+      <AddForm handleClick={leggTilVare} />
+      <ShoppingList varer={varer} onToggle={toggleVare} onEndreAntall={endreAntall} />
+    </main>
+  );
 }
-
-export default App
